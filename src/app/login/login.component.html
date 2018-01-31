@@ -1,0 +1,10 @@
+<div class="loginwrapper">
+
+  <h1>Login here</h1>
+  <input placeholder="Username" [(ngModel)] = "mediaService.username">
+  <input type="password" placeholder="Password" [(ngModel)] = "mediaService.password">
+  <button (click)="mediaService.login()">login</button>
+
+</div>
+
+{{mediaService.status}}

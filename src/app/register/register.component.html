@@ -1,0 +1,13 @@
+<div class="registerwrapper">
+
+  <h1>Register here</h1>
+  <h2>* marked fields are required!</h2>
+
+  <input type="text" placeholder="Username*" [(ngModel)] = "mediaService.username">
+  <input type="password" placeholder="Password*" [(ngModel)] = "mediaService.password">
+  <input type="text" placeholder="Email*" [(ngModel)] = "mediaService.email">
+
+  <button (click)="mediaService.register()">Register</button>
+
+</div>
+
