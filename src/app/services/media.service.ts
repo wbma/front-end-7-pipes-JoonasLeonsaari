@@ -10,6 +10,7 @@ export class MediaService {
   password: string;
   status: string;
   email: string;
+  title: string;
 
   constructor(public http: HttpClient, private router: Router) {
   }
@@ -69,5 +70,13 @@ export class MediaService {
         console.log(error.error.message);
         this.status = error.error.message;
       });
+  }
+
+  postUserFile(formData) {
+    const settings = {
+      headers: new HttpHeaders().set('x-access-token',
+        localStorage.getItem('token')),
+    };
+    return this.http.post(this.apiUrl + '/media', formData, settings);
   }
 }
