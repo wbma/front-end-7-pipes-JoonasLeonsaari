@@ -1,1 +1,4 @@
-<div>Display this content when logged in.</div>
+<div class="image" *ngFor="let file of files">
+  <h2><b>{{ file.title }}</b></h2>
+  <img [src]="'http://media.mw.metropolia.fi/wbma/uploads/' + (file?.filename | thumbnail: 'medium')">
+</div>

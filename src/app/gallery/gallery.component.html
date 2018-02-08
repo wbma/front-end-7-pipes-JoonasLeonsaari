@@ -1,0 +1,10 @@
+<div id="gallery">
+
+  <div class="card" *ngFor="let file of files">
+    <img [src]="'http://media.mw.metropolia.fi/wbma/uploads/' + file.filename">
+    <div class="card-container">
+      <h2><b>{{ file.title }}</b></h2>
+      <h3>{{ file.description }}</h3>
+    </div>
+  </div>
+</div>

@@ -1,29 +1,35 @@
-import {Injectable} from '@angular/core';
-import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
-import {Router} from '@angular/router';
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { error } from 'util';
+import { HttpHeaders } from '@angular/common/http';
 
 @Injectable()
 export class MediaService {
 
+  constructor(private http: HttpClient, private router: Router) { }
+
   apiUrl = 'http://media.mw.metropolia.fi/wbma';
+  loginUrl = '/login';
+  registerUrl = '/users';
+  mediaUrl = '/media';
+
   username: string;
   password: string;
-  status: string;
+  fullName: string;
   email: string;
-  title: string;
 
-  constructor(public http: HttpClient, private router: Router) {
-  }
+  accessToken: string;
 
   private formValidation(): boolean {
     if (!this.username) {
-      alert('please check that all required fields have been filled');
+      alert('Please check that all required fields have content');
       return false;
     } else if (!this.password) {
-      alert('please check that all required fields have been filled');
+      alert('Please check that all required fields have content');
       return false;
     } else if (!this.email) {
-      alert('please check that all required fields have been filled');
+      alert('Please check that all required fields have content');
       return false;
     } else {
       return true;
@@ -32,17 +38,21 @@ export class MediaService {
 
   public register() {
     if (this.formValidation()) {
-      console.log('username' + this.username);
-      console.log('password' + this.password);
-      console.log('email' + this.email);
+      console.log('username: ' + this.username);
+      console.log('pass: ' + this.password);
+      console.log('full name: ' + this.fullName);
+      console.log('email: ' + this.email);
 
       const body = {
         username: this.username,
         password: this.password,
         email: this.email,
+        full_name: this.fullName
       };
-      this.http.post(this.apiUrl + '/users', body).subscribe(data => {
+
+      this.http.post(this.apiUrl + this.registerUrl, body).subscribe( data => {
         console.log(data);
+
         this.login();
       });
     }
@@ -50,33 +60,50 @@ export class MediaService {
 
   public login() {
     console.log('username: ' + this.username);
-    console.log('password: ' + this.password);
+    console.log('pass: ' + this.password);
 
     const body = {
       username: this.username,
-      password: this.password,
+      password: this.password
     };
 
-    const settings = {
-      headers: new HttpHeaders().set('Content-Type', 'application/json'),
-    };
+    this.http.post(this.apiUrl + this.loginUrl, body).subscribe( data => {
+      console.log(data);
+      this.accessToken = data['token'];
 
-    this.http.post(this.apiUrl + '/login', body, settings).
-      subscribe(response => {
-        console.log(response['token']);
-        localStorage.setItem('token', response['token']);
-        this.router.navigate(['front']);
-      }, (error: HttpErrorResponse) => {
-        console.log(error.error.message);
-        this.status = error.error.message;
-      });
+      localStorage.token = this.accessToken;
+
+      console.log('local storage: ' + localStorage.token);
+
+      this.router.navigate(['front']);
+    }, (errorMsg: HttpErrorResponse) => {
+      console.log(errorMsg);
+    });
   }
 
-  postUserFile(formData) {
-    const settings = {
-      headers: new HttpHeaders().set('x-access-token',
-        localStorage.getItem('token')),
+  uploadFile(file: FormData) {
+    console.log(file);
+
+    const body = {
+      headers: new HttpHeaders({
+        'x-access-token': localStorage.getItem('token')
+      })
     };
-    return this.http.post(this.apiUrl + '/media', formData, settings);
+
+    this.http.post(this.apiUrl + this.mediaUrl, file, body).subscribe( data => {
+      console.log(data);
+      alert('thanks for uploading!');
+    }, (errorMsg: HttpErrorResponse) => {
+      console.log(errorMsg);
+    });
   }
+
+  getMedia() {
+    return this.http.get(this.apiUrl + this.mediaUrl + '?limit=999');
+  }
+
+  getNewFiles() {
+    return this.http.get(this.apiUrl + this.mediaUrl + '?limit=10');
+  }
+
 }

@@ -1,0 +1,22 @@
+#gallery {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.card {
+  max-width: 350px;
+  display: block;
+  align-content: space-between;
+  flex: auto;
+  margin: 20px 10px auto;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+
+  img {
+    width: 100%;
+    height: auto;
+  }
+}
+
+.card-container {
+  padding: 10px;
+}

@@ -1,12 +1,11 @@
+<h1>Upload file, description is optional</h1>
 
-<form (submit)="startUpload()">
-  <input type="file" name="file" (change)="setFile($event)">
-  <br>
-  <h2>set title</h2>
-  <input type="text" [(ngModel)] = "media.title" name="title">
-  <br>
-  <h3>set description</h3>
-  <textarea name="description"></textarea>
-  <br>
-  <button type="submit">Upload</button>
-</form>
+<br>
+<input type="file" name="file" (change)="fileInfo($event)">
+<br>
+<input type="text" name="title" placeholder="title" [(ngModel)]="title">
+<br>
+<input type="text" name="description" placeholder="description" [(ngModel)]="description">
+
+<br><br>
+<input type="button" value="Submit" (click)="setFile()">

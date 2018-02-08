@@ -1,47 +1,45 @@
-import {Component, OnInit} from '@angular/core';
-import {Media} from '../interfaces/media';
-import {MediaService} from '../services/media.service';
-import {HttpErrorResponse} from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { MediaService } from '../services/media.service';
 
 @Component({
   selector: 'app-upload',
   templateUrl: './upload.component.html',
-  styleUrls: ['./upload.component.scss'],
+  styleUrls: ['./upload.component.scss']
 })
 export class UploadComponent implements OnInit {
 
   file: File;
-  media: Media = {
-    title: '',
-    description: '',
-  };
+  title: string;
+  description: string;
+  formData: FormData = new FormData();
 
-
-  constructor(public mediaService: MediaService) {
-  }
-
-  setFile(evt) {
-    console.log(evt.target.files[0]);
-    this.file = evt.target.files[0];
-  }
-
-  startUpload() {
-    const formData = new FormData();
-    formData.append('file', this.file);
-    formData.append('title', this.media.title);
-    // create FormData-object
-    // add title and description to FormData object
-    // add file to formdata object
-    // send formData object to API
-    this.mediaService.postUserFile(formData).subscribe(response => {
-      console.log(response);
-    }, (error: HttpErrorResponse) => {
-      console.log(error);
-    });
-
-  }
+  constructor(private router: Router, private media: MediaService) { }
 
   ngOnInit() {
+    if (localStorage.getItem('token') === null) {
+      this.router.navigate(['login']);
+    }
+  }
+
+  setFile() {
+    if (!this.file || !this.title) { // if file or title are empty dont do nothing
+      alert('Please fill all neccessary fields!');
+    } else {
+      this.formData.append('file', this.file); // file
+      this.formData.append('title', this.title); // title
+      this.formData.append('description', this.description); // desc.
+      this.media.uploadFile(this.formData);
+    }
+  }
+
+  // fileInfo for debugging
+  fileInfo(event) {
+    console.log(event);
+    console.log('filename: ' + event.target.files[0].name);
+    console.log('file type: ' + event.target.files[0].type);
+    console.log('file size: ' + event.target.files[0].size);
+    this.file = event.target.files[0];
   }
 
 }
